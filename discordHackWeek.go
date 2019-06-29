@@ -191,7 +191,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 					"**Author :** " + author_name + "\n" +
 					"**Message :** " + message + "\n" +
 					"**Channel ID :** " + channel_name + "\n" +
-					"**Guild ID :** " + guild_name + "\n"
+					"**Guild ID :** " + guild_name + "\n\n"
 			}
 
 			s.ChannelMessageSend(m.ChannelID, ret)
