@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
@@ -96,9 +97,14 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if len(m.Content) >= 8 && m.Content[:8] == "!allChat" {
 
 		userMessage := m.Content[8:]
-		var ret = ":no_mouth:**Lastest 10 messages:no_mouth:**\n\n"
 
-		if userMessage == "" {
+		// Clean out whitesoace
+		trimmedMessage := strings.TrimSpace(userMessage)
+
+		if trimmedMessage == "" {
+			fmt.Println("Querying top 10 messages")
+
+			var ret = ":earth_americas:**Lastest 10 messages:earth_asia:**\n\n"
 
 			rows, err := db.Query("SELECT id, message, author_name FROM all_messages ORDER BY id DESC LIMIT $1", 10)
 			if err != nil {
@@ -107,15 +113,17 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			}
 			defer rows.Close()
 			for rows.Next() {
+
 				var id string
 				var message string
 				var author_name string
+
 				err = rows.Scan(&id, &message, &author_name)
 				if err != nil {
 					// handle this error
 					panic(err)
 				}
-				ret += "__#" + string(id) + " - " + author_name + ":__ " + message + "\n"
+				ret += "**#" + string(id) + " - " + author_name + ":** " + message + "\n\n"
 			}
 			s.ChannelMessageSend(m.ChannelID, ret)
 
@@ -124,13 +132,84 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			if err != nil {
 				panic(err)
 			}
+		} else if trimmedMessage == "--random" {
+			var ret = ":dizzy:**Random message:dizzy:**\n\n"
+
+			fmt.Println("Grabbing a random record")
+			rows, err := db.Query("SELECT id, message, author_name FROM all_messages order by random() LIMIT $1", 1)
+			if err != nil {
+				// handle this error better than this
+				panic(err)
+			}
+			defer rows.Close()
+			for rows.Next() {
+
+				var id string
+				var message string
+				var author_name string
+
+				err = rows.Scan(&id, &message, &author_name)
+				if err != nil {
+					// handle this error
+					panic(err)
+				}
+				ret += "**#" + string(id) + " - " + author_name + ":** " + message + "\n"
+			}
+			s.ChannelMessageSend(m.ChannelID, ret)
+
+			// get any error encountered during iteration
+			err = rows.Err()
+			if err != nil {
+				panic(err)
+			}
+		} else if trimmedMessage == "--detailed" {
+			fmt.Println("Grabbing a detailed record")
+
+			var ret = ":nerd:**Detailed lastest 10 messages:nerd:**\n\n"
+
+			rows, err := db.Query("SELECT id, message, author_name, channel_name, guild_name FROM all_messages ORDER BY id DESC LIMIT $1", 10)
+			if err != nil {
+				// handle this error better than this
+				panic(err)
+			}
+			defer rows.Close()
+			for rows.Next() {
+
+				var id string
+				var message string
+				var author_name string
+				var channel_name string
+				var guild_name string
+
+				err = rows.Scan(&id, &message, &author_name, &channel_name, &guild_name)
+				if err != nil {
+					// handle this error
+					panic(err)
+				}
+
+				ret += "**ID # :** " + string(id) + "\n" +
+					"**Author :** " + author_name + "\n" +
+					"**Message :** " + message + "\n" +
+					"**Channel ID :** " + channel_name + "\n" +
+					"**Guild ID :** " + guild_name + "\n"
+			}
+
+			s.ChannelMessageSend(m.ChannelID, ret)
+
+			// get any error encountered during iteration
+			err = rows.Err()
+			if err != nil {
+				panic(err)
+			}
+
 		} else {
+			fmt.Println("Inserting message")
 
 			sqlStatement := `
 			INSERT INTO all_messages (message, author_name, channel_name, guild_name)
 			VALUES ($1, $2, $3, $4)`
 
-			_, err := db.Exec(sqlStatement, userMessage, m.Author.Username, m.ChannelID, m.GuildID)
+			_, err := db.Exec(sqlStatement, trimmedMessage, m.Author.Username, m.ChannelID, m.GuildID)
 			if err != nil {
 				panic(err)
 			}
