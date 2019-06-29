@@ -8,23 +8,43 @@
 
 There are currently two commands:
 
-- ```-allChat sampleString```  
+- ```!allChat sampleString```  
 
   Saves the inputted message into a PostgreSQL DB. It also stores the Author's name, the guild ID, and the channel ID
   
-- ```-allChat```
+- ```!allChat```
 
   Outputs the most recent ten messages into the current channel formmated as (ID# - Author: sampleString)
+  
+- ```!allChat --detailed```  
 
-## Purpose
+ Outputs the most recent ten messages with additional details into the current channel
+
+- ```!allChat --random```  
+
+ Outputs a random message in the messages table
+ 
+## Purpose and additional details
 
 I wanted to create a way for different communities to interact. Sometimes these interactions can be funny, wholesome, or create interesting patterns. My first idea was to have each message sent to the bot tweeted out on a public Twitter account. However I still haven't had my developer account approved so that was added to the pending. I think the idea of merging guilds is an interesting concept and hope it can be explored more in the future.
+
+For the duration of Discord Hack weekend this server will be run locally for careful oversight. This code still needs a lot more error handling. I would try with simpler strings before you try and break it :laughing:
 
 ## Creating
 
 To run this bot you will need to have Golang(https://golang.org/) and PosrgreSQL installed
 
-1. You will need to run your own PostgreSQL DB and create a file. Here is the script I used..
+1. You will need to run your own PostgreSQL DB and create a file. Here is the script I used
+
+```
+CREATE TABLE all_messages (
+  id SERIAL PRIMARY KEY,
+  message TEXT NOT NULL,
+  author_name TEXT NOT NULL,
+  channel_name TEXT NOT NULL,
+  guild_name TEXT NOT NULL
+)
+```
 
 2. Clone the repo and add config.js in the root directory
 
@@ -46,6 +66,5 @@ config.js
 ## // TODO
 
 - add a timestamp field
-- output a detailed list 
 - tweet new messages with Twitter API
 - open API to grab all data
