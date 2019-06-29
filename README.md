@@ -8,7 +8,7 @@ https://discordapp.com/api/oauth2/authorize?client_id=591818565238128641&permiss
 
 ## Using
 
-There are currently two commands:
+There are currently four commands:
 
 - ```!allChat sampleString```  
 
