@@ -10,7 +10,7 @@ There are currently two commands:
 
 - ```-allChat sampleString```  
 
-  Saves the inputted message into a PostgreSQL DB. It also stores the Author'name, the guild ID, and the channel ID
+  Saves the inputted message into a PostgreSQL DB. It also stores the Author's name, the guild ID, and the channel ID
   
 - ```-allChat```
 
