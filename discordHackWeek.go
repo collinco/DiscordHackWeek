@@ -213,6 +213,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			if err != nil {
 				panic(err)
 			}
+
+			s.ChannelMessageSend(m.ChannelID, "Your message was added!")
 		}
 	}
 
