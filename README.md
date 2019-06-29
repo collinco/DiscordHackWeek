@@ -2,7 +2,7 @@
 
 
 
-# DiscordHackWeek
+# ALL CHAT - DiscordHackWeek
 
 ## Using
 
