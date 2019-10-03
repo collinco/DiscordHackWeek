@@ -6,7 +6,7 @@
 
 https://discordapp.com/api/oauth2/authorize?client_id=591818565238128641&permissions=0&redirect_uri=https%3A%2F%2Fgoogle.com&response_type=code&scope=bot%20identify
 
-Feel free to msg me! Cole#4884
+Feel free to msg me. Cole#4884
 
 ## Using
 
